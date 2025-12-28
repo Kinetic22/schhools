@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'self' data: blob: 'unsafe-inline' 'unsafe-eval'; script-src * 'self' 'unsafe-inline' 'unsafe-eval'; connect-src * 'self' 'unsafe-inline' 'unsafe-eval'; style-src * 'self' 'unsafe-inline';">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driveschool - Автошкола</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Змінні кольорів --- */
+        :root {
+            --bg-color: #EFEDE2;
+            --primary-brown: #65533D;
+            --primary-brown-hover: #4e402f;
+            --input-bg: #FDF6EC;
+            --input-border: #C4C4C4;
+            --text-dark: #1A1A1A;
+            --filter-bg: #E3C4C4;
+            --card-bg: #FFFFFF;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; flex: 1; width: 100%; }
+
+        /* --- Хедер --- */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }
+        .logo { font-size: 24px; font-weight: 800; cursor: pointer; }
+        nav ul { list-style: none; display: flex; gap: 40px; align-items: center; }
+        
+        nav a { 
+            text-decoration: none; 
+            color: var(--text-dark); 
+            font-weight: 500; 
+            cursor: pointer; 
+            transition: color 0.3s, border-bottom 0.3s; 
+            border-bottom: 2px solid transparent; 
+            padding-bottom: 2px;
+        }
+        
+        nav a:hover, nav a.active { 
+            color: var(--primary-brown); 
+            border-bottom-color: var(--primary-brown);
+        }
+
+        .login-link { font-weight: 700; }
+
+        /* --- Кнопки --- */
+        .btn {
+            background-color: var(--primary-brown);
+            color: white; border: none; padding: 15px 40px; font-size: 18px; font-weight: 700; border-radius: 8px; cursor: pointer; transition: background 0.3s; text-decoration: none; display: inline-block; text-align: center;
+        }
+        .btn:hover { background-color: var(--primary-brown-hover); }
+        .btn-outline {
+            background-color: transparent; border: 2px solid #65533D; color: #65533D; padding: 12px 30px; font-size: 16px; font-weight: 700; border-radius: 8px; cursor: pointer; text-decoration: none; transition: 0.3s;
+        }
+        .btn-outline:hover { background-color: var(--primary-brown); color: white; }
+        
+        .btn-card-brown {
+            background-color: #65533D; color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block; cursor: pointer;
+        }
+        .btn-card-brown:hover { opacity: 0.9; }
+
+        .btn-full { width: 100%; padding: 15px; font-size: 20px; margin-bottom: 25px; }
+
+        /* --- Секції --- */
+        .section-title { text-align: center; font-size: 32px; margin: 60px 0 40px; font-weight: 800; }
+        
+        /* ГОЛОВНА */
+        #home-page { display: block; animation: fadeIn 0.5s; }
+        .hero { display: flex; align-items: center; justify-content: space-between; padding: 60px 0; gap: 40px; }
+        .hero-content { max-width: 50%; }
+        .hero h1 { font-size: 42px; line-height: 1.2; margin-bottom: 20px; font-weight: 800; }
+        .hero p { font-size: 18px; margin-bottom: 30px; color: #333; }
+        .hero-image { width: 50%; }
+        .hero-image img { width: 100%; height: auto; display: block; }
+
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 60px; }
+        .feature-card { background: #fffbf6; border-radius: 15px; padding: 40px 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .icon-box { font-size: 60px; margin-bottom: 20px; color: #000; }
+        .feature-card h3 { font-size: 22px; margin-bottom: 15px; }
+
+        /* Картки на головній */
+        .home-course-card {
+            background: #fffbf6;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 250px;
+        }
+        .home-course-card h3 { font-size: 24px; margin-bottom: 10px; color: #1A1A1A; }
+        .price-text { font-size: 18px; color: #333; margin-bottom: 20px; font-weight: 500; }
+
+
+        /* КУРСИ */
+        #courses-page { display: none; animation: fadeIn 0.5s; }
+        .courses-header { margin-bottom: 30px; }
+        .courses-header h1 { font-size: 36px; margin-bottom: 10px; }
+        
+        /* Стилі фільтрів */
+        .filter-box { background-color: #D4B5B0; padding: 30px; border-radius: 15px; margin-bottom: 40px; }
+        .filter-title { font-size: 16px; margin-bottom: 10px; color: #555; display: block;}
+        .filter-row { display: flex; gap: 20px; margin-bottom: 15px; flex-wrap: wrap; }
+        .filter-full { width: 100%; margin-bottom: 15px; }
+        .filter-input, .filter-select { width: 100%; padding: 12px 15px; border-radius: 8px; border: none; font-size: 16px; outline: none; background: white; }
+        .filter-group-half { flex: 1; }
+        .filter-btn { width: 100%; background-color: #654321; color: white; padding: 15px; border: none; border-radius: 8px; font-weight: 700; font-size: 18px; cursor: pointer; margin-top: 10px; }
+        .filter-btn:hover { opacity: 0.9; }
+
+        .course-wide-card { background: white; border-radius: 15px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .category-tag { background-color: #D3D3D3; padding: 5px 15px; border-radius: 20px; font-weight: 700; font-size: 14px; color: #333; }
+        .rating { color: #D4AF37; font-weight: 700; font-size: 16px; }
+        .course-wide-card h2 { font-size: 26px; margin-bottom: 10px; color: #4A3B2A; }
+        .course-desc { color: #666; margin-bottom: 20px; font-size: 15px; }
+        .course-meta { margin-bottom: 20px; font-size: 15px; color: #444; font-weight: 600; line-height: 1.8; }
+        .highlight-red { color: #8B0000; }
+        .card-bottom { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px; }
+        .price-block { font-size: 28px; font-weight: 800; color: #4A3B2A; }
+        .price-note { font-size: 12px; color: #888; font-weight: 400; display: block; }
+        .card-buttons { display: flex; gap: 15px; }
+
+        .pagination-wrapper { display: flex; justify-content: space-between; align-items: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; flex-wrap: wrap; gap: 20px; }
+        .pagination-info { color: #666; font-size: 15px; }
+        .pagination-controls { display: flex; gap: 10px; }
+        
+        /* СТИЛІ КНОПОК ПАГІНАЦІЇ */
+        .page-btn { width: 40px; height: 40px; border: 1px solid #ccc; background: transparent; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 600; color: #333; transition: 0.3s; font-size: 16px; }
+        .page-btn:hover { border-color: var(--primary-brown); color: var(--primary-brown); }
+        .page-btn.active { background-color: #E6D7D7; border-color: #D4B5B0; }
+        .page-btn.disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+
+        /* СТОРІНКА ПРО НАС */
+        #about-page { display: none; animation: fadeIn 0.5s; }
+        .about-hero { display: flex; align-items: center; gap: 40px; margin-bottom: 60px; }
+        .about-hero img { width: 100%; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .about-text h1 { font-size: 36px; margin-bottom: 20px; color: #1A1A1A; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 80px; }
+        .stat-item { background: #fff; padding: 30px; text-align: center; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .stat-number { font-size: 42px; font-weight: 800; color: var(--primary-brown); display: block; margin-bottom: 5px; }
+        .consultation-section { background-color: #D4B5B0; padding: 50px; border-radius: 20px; text-align: center; margin-bottom: 80px; }
+        .consultation-form { display: flex; justify-content: center; gap: 15px; max-width: 600px; margin: 0 auto; flex-wrap: wrap; }
+        .consultation-input { flex: 1; padding: 15px 20px; border-radius: 8px; border: none; font-size: 18px; min-width: 250px; outline: none; }
+        .consultation-btn { background-color: #654321; color: white; padding: 15px 40px; border: none; border-radius: 8px; font-weight: 700; font-size: 18px; cursor: pointer; }
+        .contacts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .contact-card { background: #fffbf6; padding: 30px; border-radius: 15px; display: flex; align-items: flex-start; gap: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .contact-icon { background-color: var(--primary-brown); color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        .contact-info h3 { margin-bottom: 10px; font-size: 20px; }
+        .contact-info a { color: #555; text-decoration: none; display: block; }
+
+        footer { background-color: #594a36; color: white; text-align: center; padding: 20px 0; margin-top: auto; font-size: 14px; }
+        
+        /* --- МОДАЛЬНІ ВІКНА --- */
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
+            overflow: auto; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(3px);
+            align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background-color: #EBE7DE; margin: auto; padding: 40px; border-radius: 12px;
+            width: 100%; max-width: 450px; position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center;
+            animation: slideDown 0.3s ease-out;
+        }
+        @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .close-btn { position: absolute; top: 15px; right: 20px; color: #aaa; font-size: 28px; cursor: pointer; }
+        .close-btn:hover { color: #000; }
+        
+        .modal h2 { font-size: 36px; margin-bottom: 30px; color: #000; font-weight: 700; }
+        .form-group { margin-bottom: 20px; }
+        .form-input { width: 100%; padding: 15px; border: 1px solid var(--input-border); border-radius: 8px; background-color: var(--input-bg); font-size: 16px; outline: none; transition: 0.3s; }
+        .form-options { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; font-size: 15px; color: #1A1A1A; }
+        .forgot-pass { color: var(--text-dark); text-decoration: none; }
+        .checkbox-container { display: flex; align-items: center; cursor: pointer; position: relative; padding-left: 30px; user-select: none; }
+        .checkbox-container input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
+        .checkmark { position: absolute; left: 0; top: 50%; transform: translateY(-50%); height: 20px; width: 20px; background-color: var(--input-bg); border: 1px solid var(--input-border); border-radius: 50%; }
+        .checkbox-container input:checked ~ .checkmark { background-color: var(--primary-brown); }
+        .switch-link { font-size: 15px; color: #1A1A1A; }
+        .switch-link span { color: var(--text-dark); font-weight: 600; cursor: pointer; text-decoration: underline; }
+        
+        /* ДЕТАЛІ КУРСУ */
+        .course-details-content { text-align: left; max-width: 600px; }
+        .details-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 15px;}
+        .details-header h2 { margin: 0; font-size: 28px; }
+        .instructor-block { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; background: #fff; padding: 10px; border-radius: 8px;}
+        .instructor-avatar { width: 50px; height: 50px; background: #ccc; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #fff;}
+        .syllabus-list { margin-bottom: 25px; padding-left: 20px; }
+        .syllabus-list li { margin-bottom: 5px; color: #444; }
+
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 15px; }
+            .hero, .about-hero { flex-direction: column; text-align: center; }
+            .hero-content, .hero-image, .about-text, .about-hero img { width: 100%; }
+            .card-bottom { flex-direction: column; align-items: flex-start; }
+            .card-buttons { width: 100%; flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="logo" onclick="showPage('home')">Driveschool</div>
+            <nav>
+                <ul>
+                    <li><a href="#" onclick="showPage('home')" id="nav-home" class="active">Головна</a></li>
+                    <li><a href="#" onclick="showPage('courses')" id="nav-courses">Курси</a></li>
+                    <li><a href="#" onclick="showPage('about')" id="nav-about">Про нас</a></li>
+                    
+                    <li id="auth-guest">
+                        <a class="login-link" onclick="openLogin()">Вхід</a>
+                    </li>
+
+                    <li id="auth-user" style="display: none; align-items: center; gap: 15px;">
+                        <span id="headerUserName" style="font-weight: 700; color: #65533D; border-bottom: 2px solid #65533D; cursor:default;">Користувач</span>
+                        <a onclick="logoutUser()" style="cursor: pointer; font-size: 14px; color: #555;" title="Вийти з акаунту">
+                            <i class="fas fa-sign-out-alt"></i> Вихід
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <div id="home-page">
+            <section class="hero">
+                <div class="hero-content">
+                    <h1>Навчись керувати з впевненістю</h1>
+                    <p>Професійні інструктори, сучасні автомобілі, гарантований результат.</p>
+                    <a href="#" class="btn" onclick="openRegister()">Записатися</a>
+                </div>
+                <div class="hero-image">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3089/3089803.png" alt="Автомобіль">
+                </div>
+            </section>
+            
+            <h2 class="section-title">Переваги навчання</h2>
+            <section class="grid-container">
+                <div class="feature-card"><div class="icon-box"><i class="fas fa-car"></i></div><h3>Сучасні автотренажери</h3></div>
+                <div class="feature-card"><div class="icon-box"><i class="fas fa-user-tie"></i></div><h3>Професійні інструктори</h3></div>
+                <div class="feature-card"><div class="icon-box"><i class="far fa-calendar-alt"></i></div><h3>Гнучкий графік</h3></div>
+            </section>
+
+            <section class="grid-container">
+                <div class="home-course-card">
+                    <h3>Категорія А</h3>
+                    <p class="price-text">Вартість від 9 000 грн</p>
+                    <button class="btn-card-brown" onclick="openCourseFromHome('Мото-курс - Категорія А')">Детальніше</button>
+                </div>
+
+                <div class="home-course-card">
+                    <h3>Категорія В</h3>
+                    <p class="price-text">Вартість від 12 000 грн</p>
+                    <button class="btn-card-brown" onclick="openCourseFromHome('Повний курс - Категорія В')">Детальніше</button>
+                </div>
+
+                <div class="home-course-card">
+                    <h3>Оновлення навичок</h3>
+                    <p class="price-text">Вартість від 4 000 грн</p>
+                    <button class="btn-card-brown" onclick="openCourseFromHome('Оновлення навичок (практика)')">Детальніше</button>
+                </div>
+            </section>
+        </div>
+
+        <div id="courses-page">
+            <div class="courses-header">
+                <h1>Курси</h1>
+                <p>Великий вибір курсів водіння: категорії А, В, С, інтенсиви, повторні тренування, спецкурси.</p>
+            </div>
+            
+            <div class="filter-box" id="public-filters">
+                <div class="filter-full">
+                    <label class="filter-title">Пошук курсу</label>
+                    <input type="text" id="searchInput" class="filter-input" placeholder="Наприклад «Категорія В»">
+                </div>
+                <div class="filter-row">
+                    <div class="filter-group-half">
+                        <select id="categorySelect" class="filter-select">
+                            <option value="all">Всі категорії</option>
+                            <option value="Категорія В">Категорія В</option>
+                            <option value="Категорія А">Категорія А</option>
+                            <option value="Категорія С">Категорія С</option>
+                            <option value="Категорія D">Категорія D</option>
+                            <option value="Інтенсив">Інтенсив</option>
+                            <option value="Вночі">Вночі</option>
+                            <option value="Екстрім">Екстрім</option>
+                            <option value="Онлайн">Онлайн</option>
+                        </select>
+                    </div>
+                    <div class="filter-group-half">
+                        <select id="sortSelect" class="filter-select">
+                            <option value="popular">За популярністю</option>
+                            <option value="price_asc">Від дешевих до дорогих</option>
+                            <option value="price_desc">Від дорогих до дешевих</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-full">
+                    <label class="filter-title">Ціна (грн)</label>
+                    <div class="filter-row" style="margin-bottom: 0;">
+                        <input type="number" id="minPriceInput" class="filter-input" placeholder="0" style="flex: 1;">
+                        <input type="number" id="maxPriceInput" class="filter-input" placeholder="до" style="flex: 1;">
+                    </div>
+                </div>
+                <button class="filter-btn" onclick="applyFilters()">Застосувати фільтри</button>
+            </div>
+
+            <div id="courses-list"></div>
+            
+            <div class="pagination-wrapper" id="pagination-wrapper">
+                <div class="pagination-info" id="pagination-info"></div>
+                <div class="pagination-controls" id="pagination-controls"></div>
+            </div>
+        </div>
+
+        <div id="about-page">
+            <section class="about-hero">
+                <div class="about-text">
+                    <h1>Ваш шлях до безпечного водіння</h1>
+                    <p>Driveschool — це більше, ніж просто автошкола. Ми створюємо нове покоління відповідальних водіїв з 2015 року.</p>
+                    <p>Ми використовуємо новітні методики, сучасний автопарк та індивідуальний психологічний підхід до кожного учня.</p>
+                </div>
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Команда Driveschool">
+                </div>
+            </section>
+            <section class="stats-grid">
+                <div class="stat-item"><span class="stat-number">10+</span><span class="stat-label">Років досвіду</span></div>
+                <div class="stat-item"><span class="stat-number">5000+</span><span class="stat-label">Випускників</span></div>
+                <div class="stat-item"><span class="stat-number">98%</span><span class="stat-label">Склали іспит</span></div>
+                <div class="stat-item"><span class="stat-number">20+</span><span class="stat-label">Авто в парку</span></div>
+            </section>
+            <section class="consultation-section">
+                <h2>Потрібна консультація?</h2>
+                <p>Введіть свій номер, і ми допоможемо!</p>
+                <form class="consultation-form" onsubmit="handleConsultation(event)">
+                    <input type="tel" id="consultPhone" class="consultation-input" placeholder="+380 (XX) XXX-XX-XX" required>
+                    <button type="submit" class="consultation-btn">Замовити консультацію</button>
+                </form>
+            </section>
+            <h2 class="section-title" style="margin-top: 0;">Наші контакти</h2>
+            <section class="contacts-section">
+                <div class="contacts-grid">
+                    <div class="contact-card">
+                        <div class="contact-icon"><i class="fas fa-phone-alt"></i></div>
+                        <div class="contact-info"><h3>Зателефонуйте нам</h3><a href="tel:+38012345678">+380 12 345 67 89</a><a href="tel:+38098765432">+380 98 765 43 21</a><a href="tel:+38050111223">+380 50 111 22 33</a></div>
+                    </div>
+                    <div class="contact-card">
+                        <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                        <div class="contact-info"><h3>Напишіть нам</h3><p>Ми відповідаємо протягом години</p><a href="mailto:drive.school@gmail.com" style="font-weight: 700; color: var(--primary-brown);">drive.school@gmail.com</a></div>
+                    </div>
+                    <div class="contact-card">
+                        <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <div class="contact-info"><h3>Завітайте до офісу</h3><p>м. Київ, вул. Хрещатик, 1</p><p>Пн-Пт: 09:00 - 19:00</p></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <footer><p>&copy; 2025 Driveschool Автошкола. Всі права захищено.</p></footer>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeAllModals()">&times;</span>
+            <h2>Вхід</h2>
+            <form onsubmit="event.preventDefault();">
+                <div class="form-group"><input type="email" id="loginEmail" placeholder="Електронна пошта" class="form-input" required></div>
+                <div class="form-group"><input type="password" id="loginPass" placeholder="Пароль" class="form-input" required></div>
+                <div class="form-options">
+                    <label class="checkbox-container">Запам’ятати мене<input type="checkbox"><span class="checkmark"></span></label>
+                    <a href="#" class="forgot-pass">Забули пароль?</a>
+                </div>
+                <button type="button" id="btnLoginSubmit" class="btn btn-full">Увійти</button>
+            </form>
+            <div class="switch-link">Немає аккаунта? <span onclick="switchToRegister()">Зареєструватися</span></div>
+        </div>
+    </div>
+
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeAllModals()">&times;</span>
+            <h2>Зареєструватися</h2>
+            <form>
+                <div class="form-group"><input type="text" id="regName" placeholder="ПІБ (Ім'я Прізвище)" class="form-input" required></div>
+                <div class="form-group"><input type="date" id="regDate" class="form-input" required title="Дата народження"></div>
+                <div class="form-group"><input type="email" id="regEmail" placeholder="Електронна пошта" class="form-input" required></div>
+                <div class="form-group"><input type="tel" id="regPhone" placeholder="Номер телефону" class="form-input" required></div>
+                <div class="form-group"><input type="password" id="regPass" placeholder="Пароль" class="form-input" required></div>
+                <button type="button" id="btnRegisterSubmit" class="btn btn-full" style="margin-top: 20px;">Зареєструватися</button>
+            </form>
+            <div class="switch-link">Вже є аккаунт? <span onclick="switchToLogin()">Увійти</span></div>
+        </div>
+    </div>
+
+    <div id="registerSuccessModal" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <span class="close-btn" onclick="closeAllModals()">&times;</span>
+            <div style="font-size: 50px; color: #65533D; margin-bottom: 20px;"><i class="fas fa-check-circle"></i></div>
+            <h2>Реєстрація успішна!</h2>
+            <p style="font-size: 18px; color: #555;">Тепер ви можете увійти в свій кабінет.</p>
+            <button class="btn" onclick="openLoginFromSuccess()" style="margin-top: 20px;">Увійти в кабінет</button>
+        </div>
+    </div>
+
+    <div id="consultSuccessModal" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <span class="close-btn" onclick="closeAllModals()">&times;</span>
+            <div style="font-size: 50px; color: #65533D; margin-bottom: 20px;"><i class="fas fa-check-circle"></i></div>
+            <h2>Дякуємо!</h2>
+            <p style="font-size: 18px; color: #555;">Вам зателефонують в продовж найближчого терміну.</p>
+            <button class="btn" onclick="closeAllModals()" style="margin-top: 20px;">Чудово</button>
+        </div>
+    </div>
+
+    <div id="courseDetailsModal" class="modal">
+        <div class="modal-content course-details-content">
+            <span class="close-btn" onclick="closeAllModals()">&times;</span>
+            <div class="details-header">
+                <h2 id="detailTitle">Назва курсу</h2>
+                <span id="detailRating" class="rating"><i class="fas fa-star"></i> 5.0</span>
+            </div>
+            <div class="instructor-block">
+                <div class="instructor-avatar"><i class="fas fa-user-tie"></i></div>
+                <div>
+                    <div style="font-size: 14px; color: #777;">Ваш інструктор</div>
+                    <div id="detailInstructor" style="font-weight: 700; font-size: 18px;">Ім'я Прізвище</div>
+                </div>
+            </div>
+            <p id="detailDesc" style="margin-bottom: 20px; line-height: 1.6;">Повний опис курсу...</p>
+            <h4 style="margin-bottom: 10px;">Програма навчання:</h4>
+            <ul id="detailSyllabus" class="syllabus-list"></ul>
+            <div class="course-meta" id="detailMeta"></div>
+            <div class="card-bottom" style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
+                <div class="price-block" id="detailPrice">0 ₴</div>
+                <button class="btn" onclick="openRegister()">Записатися на курс</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- ДАНІ КУРСІВ (ВСІ 9) ---
+        const allCourses = [
+            {
+                tag: "Категорія В", rating: 4.8, title: "Повний курс - Категорія В",
+                desc: "Теорія + практичні заняття на сучасних автомобілях. Індивідуальний підхід.",
+                fullDesc: "Цей курс розроблений для початківців, які хочуть отримати посвідчення водія категорії B. Ви навчитесь впевнено керувати легковим автомобілем в міському потоці та на трасі.",
+                instructor: "Олександр Петренко",
+                syllabus: ["Теоретичний блок (ПДР, будова авто)", "Тренажерна підготовка", "Відпрацювання маневрів на майданчику", "Виїзд в місто (маршрути МРЕВ)", "Внутрішній іспит"],
+                details: ["Тривалість: <strong>8 тижнів</strong>", "Занять: <strong>32 години</strong>", "Старт: <span class='highlight-red'>щомісяця</span>"],
+                priceStr: "12 000 ₴", priceVal: 12000, note: "можлива розстрочка"
+            },
+            {
+                tag: "Категорія А", rating: 4.7, title: "Мото-курс - Категорія А",
+                desc: "Практика в безпечному тренувальному полігоні та навчання трюкам парковки.",
+                fullDesc: "Мрієте про свободу на двох колесах? Наш мото-курс навчить вас не просто їздити, а й виживати в трафіку. Особлива увага приділяється балансу та гальмуванню.",
+                instructor: "Дмитро Коваленко",
+                syllabus: ["Екіпірування та безпека", "Посадка та баланс", "Маневрування на низькій швидкості", "Екстрене гальмування", "Проходження поворотів"],
+                details: ["Тривалість: <strong>6 тижнів</strong>", "Занять: <strong>20 годин</strong>", "Старт: <span class='highlight-red'>щомісяця</span>"],
+                priceStr: "9 000 ₴", priceVal: 9000, note: "можлива розстрочка"
+            },
+            {
+                tag: "Категорія С", rating: 4.6, title: "Вантажний транспорт - Категорія С",
+                desc: "Теорія ПДР + практика в умовах міста та з важким причепом.",
+                fullDesc: "Професійний курс для водіїв вантажівок. Навчання проходить на сучасних автомобілях MAN та DAF.",
+                instructor: "Василь Іваненко",
+                syllabus: ["Особливості габаритів", "Робота з причепом", "Вантажні перевезення", "Технічне обслуговування", "Міжнародні правила"],
+                details: ["Тривалість: <strong>10 тижнів</strong>", "Занять: <strong>40 годин</strong>", "Старт: <strong>раз на 6 тижнів</strong>"],
+                priceStr: "16 500 ₴", priceVal: 16500, note: "включено підготовку до перевізників"
+            },
+            {
+                tag: "Інтенсив", rating: 4.6, title: "Інтенсив (Кат. В) - 2 тижні",
+                desc: "Щільний курс для тих, хто хоче здати швидко (теорія + практика).",
+                fullDesc: "Максимальне занурення в процес. Заняття проходять щодня. Ідеально для тих, хто цінує свій час.",
+                instructor: "Марина Лисенко",
+                syllabus: ["Експрес-теорія", "Щоденна практика по 2 години", "Нічне водіння", "Психологія водія"],
+                details: ["Тривалість: <strong>2 тижні</strong>", "Занять: <strong>2 години/день</strong>", "Старт: <strong>через 2 тижні</strong>"],
+                priceStr: "14 500 ₴", priceVal: 14500, note: "актуальна пропозиція"
+            },
+            {
+                tag: "Інтенсив", rating: 4.7, title: "Оновлення навичок (практика)",
+                desc: "Індивідуальні заняття для підвищення впевненості на дорозі.",
+                fullDesc: "Маєте права, але давно не їздили? Ми допоможемо відновити навички та подолати страх дороги.",
+                instructor: "Ігор Сидоренко",
+                syllabus: ["Відпрацювання парковки", "Рух в щільному потоці", "Проїзд складних перехресть", "Відновлення м'язової пам'яті"],
+                details: ["Тривалість: <strong>1-4 заняття</strong>", "Занять: <strong>за домовленістю</strong>", "Старт: <strong>в будь-який час</strong>"],
+                priceStr: "від 1 500 ₴", priceVal: 1500, note: "за заняття"
+            },
+            {
+                tag: "Вночі", rating: 4.7, title: "Курс нічного водіння",
+                desc: "Спеціальні заняття з нічного водіння та роботою фар.",
+                fullDesc: "Вночі небезпека зростає. Навчіться правильно користуватися світлом та розпізнавати загрози в темряві.",
+                instructor: "Олександр Петренко",
+                syllabus: ["Робота з дальнім/ближнім світлом", "Засліплення зустрічним авто", "Пішоходи в темряві", "Орієнтування без розмітки"],
+                details: ["Тривалість: <strong>4 тижні</strong>", "Занять: <strong>12 годин</strong>", "Старт: <strong>по запису</strong>"],
+                priceStr: "3 500 ₴", priceVal: 3500, note: "за блок"
+            },
+            {
+                tag: "Екстрім", rating: 4.9, title: "Екстремальне водіння",
+                desc: "Контр-аварійна підготовка, керований занос, вихід із складних ситуацій.",
+                fullDesc: "Тільки для досвідчених водіїв. Навчіться контролювати авто на льоду, мокрому асфальті та в критичних ситуаціях.",
+                instructor: "Олексій Драйв",
+                syllabus: ["Керований занос", "Поліцейський розворот", "Екстрений об'їзд перешкоди", "Гальмування двигуном"],
+                details: ["Тривалість: <strong>1 тиждень</strong>", "Занять: <strong>10 годин</strong>", "Старт: <strong>по набору групи</strong>"],
+                priceStr: "8 000 ₴", priceVal: 8000, note: "тільки з правами"
+            },
+            {
+                tag: "Категорія D", rating: 4.5, title: "Пасажирські перевезення - Кат. D",
+                desc: "Навчання водінню автобуса. Особливості перевезення людей.",
+                fullDesc: "Відповідальність за пасажирів — понад усе. Вивчаємо специфіку керування великим автобусом.",
+                instructor: "Микола Водійчук",
+                syllabus: ["Плавність ходу", "Посадка/висадка пасажирів", "Безпека салону", "Великі габарити"],
+                details: ["Тривалість: <strong>2.5 місяці</strong>", "Занять: <strong>50 годин</strong>", "Старт: <strong>раз на 2 місяці</strong>"],
+                priceStr: "18 000 ₴", priceVal: 18000, note: "потрібен стаж водіння"
+            },
+            {
+                tag: "Онлайн", rating: 4.8, title: "Теорія ПДР Online",
+                desc: "Вивчення правил дорожнього руху дистанційно через Zoom.",
+                fullDesc: "Немає часу їздити в клас? Вивчайте правила з будь-якої точки світу з нашими викладачами.",
+                instructor: "Анна Теорія",
+                syllabus: ["Всі теми ПДР", "Онлайн тести", "Розбір дорожніх ситуацій", "Запис лекцій"],
+                details: ["Тривалість: <strong>1 місяць</strong>", "Занять: <strong>20 лекцій</strong>", "Старт: <strong>щотижня</strong>"],
+                priceStr: "2 500 ₴", priceVal: 2500, note: "доступ до записів"
+            }
+        ];
+
+        let currentCourses = [...allCourses];
+        let currentPage = 1;
+        const itemsPerPage = 3;
+
+        // --- ЗМІННІ СЕРВЕРА ---
+        const API_URL = 'http://localhost:3000/api';
+        let currentUser = null;
+
+        // --- DOM ELEMENTI ---
+        const loginModal = document.getElementById("loginModal");
+        const registerModal = document.getElementById("registerModal");
+        const consultSuccessModal = document.getElementById("consultSuccessModal");
+        const courseDetailsModal = document.getElementById("courseDetailsModal");
+        const registerSuccessModal = document.getElementById("registerSuccessModal");
+
+        // --- ВАЖЛИВО! БЕЗПЕЧНЕ ПІДКЛЮЧЕННЯ КНОПОК ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnReg = document.getElementById('btnRegisterSubmit');
+            if(btnReg) btnReg.addEventListener('click', registerUser);
+
+            const btnLog = document.getElementById('btnLoginSubmit');
+            if(btnLog) btnLog.addEventListener('click', loginUser);
+        });
+
+        // --- ФУНКЦІЇ МОДАЛЬНИХ ВІКОН ---
+        function closeAllModals() {
+            [loginModal, registerModal, consultSuccessModal, courseDetailsModal, registerSuccessModal].forEach(m => {
+                if(m) m.style.display = "none";
+            });
+        }
+        function openLogin() { closeAllModals(); loginModal.style.display = "flex"; }
+        function openRegister() { closeAllModals(); registerModal.style.display = "flex"; }
+        function switchToRegister() { openRegister(); }
+        function switchToLogin() { openLogin(); }
+        function openLoginFromSuccess() { openLogin(); }
+
+        function handleConsultation(event) {
+            event.preventDefault();
+            const phoneInput = document.getElementById('consultPhone');
+            if(phoneInput.value.trim() !== "") {
+                closeAllModals();
+                consultSuccessModal.style.display = "flex";
+                phoneInput.value = "";
+            }
+        }
+
+        window.onclick = function(event) {
+            if ([loginModal, registerModal, consultSuccessModal, courseDetailsModal, registerSuccessModal].includes(event.target)) {
+                closeAllModals();
+            }
+        }
+
+        // --- НАВІГАЦІЯ ---
+        function showPage(pageId) {
+            document.getElementById('home-page').style.display = 'none';
+            document.getElementById('courses-page').style.display = 'none';
+            document.getElementById('about-page').style.display = 'none';
+            document.getElementById(pageId + '-page').style.display = 'block';
+            
+            document.querySelectorAll('nav a').forEach(el => el.classList.remove('active'));
+            document.getElementById('nav-' + pageId).classList.add('active');
+
+            if (pageId === 'courses' && !currentUser) {
+                document.getElementById('public-filters').style.display = 'block';
+                document.getElementById('pagination-wrapper').style.display = 'flex';
+                renderCourses();
+            } 
+        }
+
+        // --- API: РЕЄСТРАЦІЯ ---
+        async function registerUser() {
+            const fullName = document.getElementById('regName').value;
+            const birthDate = document.getElementById('regDate').value;
+            const email = document.getElementById('regEmail').value;
+            const phone = document.getElementById('regPhone').value;
+            const password = document.getElementById('regPass').value;
+
+            if(!email || !password || !fullName || !birthDate || !phone) {
+                alert("Будь ласка, заповніть всі поля!");
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, fullName, phone, birthDate })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    closeAllModals();
+                    registerSuccessModal.style.display = 'flex';
+                } else {
+                    alert('Помилка: ' + data.message);
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Сервер не відповідає.');
+            }
+        }
+
+        // --- API: ВХІД ---
+        async function loginUser() {
+            // Тепер ми знаходимо елементи по ID, які я додав у HTML
+            const emailInput = document.getElementById('loginEmail');
+            const passInput = document.getElementById('loginPass');
+
+            // Додаткова перевірка, чи знайшлися елементи
+            if (!emailInput || !passInput) {
+                console.error("Помилка: Поля вводу логіну не знайдені в HTML");
+                return;
+            }
+
+            const email = emailInput.value;
+            const password = passInput.value;
+
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentUser = data.user;
+                    
+                    // ОНОВЛЮЄМО ШАПКУ:
+                    document.getElementById('auth-guest').style.display = 'none';
+                    document.getElementById('auth-user').style.display = 'flex';
+                    document.getElementById('headerUserName').innerText = currentUser.full_name;
+
+                    alert(`Вітаю! Ви увійшли як: ${currentUser.role}`);
+                    closeAllModals();
+                    
+                    // Ховаємо фільтри
+                    document.getElementById('public-filters').style.display = 'none';
+                    document.getElementById('pagination-wrapper').style.display = 'none';
+
+                    if (currentUser.role === 'admin') loadAdminDashboard();
+                    else if (currentUser.role === 'instructor') loadInstructorDashboard();
+                    else if (currentUser.role === 'student') loadStudentDashboard();
+                } else {
+                    alert('Помилка: ' + data.message);
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Сервер не відповідає.');
+            }
+        }
+
+        // --- ВИХІД ---
+        function logoutUser() {
+            currentUser = null;
+            
+            // Повертаємо шапку назад
+            document.getElementById('auth-guest').style.display = 'block';
+            document.getElementById('auth-user').style.display = 'none';
+            
+            // Повертаємо фільтри
+            document.getElementById('public-filters').style.display = 'block';
+            document.getElementById('pagination-wrapper').style.display = 'flex';
+
+            showPage('home');
+            alert("Ви вийшли з акаунту.");
+        }
+
+        // --- ВІДОБРАЖЕННЯ КУРСІВ ---
+        function openCourseFromHome(courseTitle) {
+            showPage('courses');
+            setTimeout(() => { openCourseDetails(courseTitle); }, 50);
+        }
+
+        function openCourseDetails(courseTitle) {
+            const course = allCourses.find(c => c.title === courseTitle);
+            if (course) {
+                document.getElementById('detailTitle').innerText = course.title;
+                document.getElementById('detailRating').innerHTML = `<i class="fas fa-star"></i> ${course.rating}`;
+                document.getElementById('detailInstructor').innerText = course.instructor;
+                document.getElementById('detailDesc').innerText = course.fullDesc;
+                document.getElementById('detailPrice').innerText = course.priceStr;
+                
+                const syllabusContainer = document.getElementById('detailSyllabus');
+                syllabusContainer.innerHTML = '';
+                course.syllabus.forEach(item => {
+                    syllabusContainer.innerHTML += `<li><i class="fas fa-check" style="color: #65533D; margin-right:5px;"></i> ${item}</li>`;
+                });
+
+                document.getElementById('detailMeta').innerHTML = course.details.map(d => `<div>${d}</div>`).join('');
+                closeAllModals();
+                document.getElementById('courseDetailsModal').style.display = 'flex';
+            }
+        }
+
+        function renderCourses() {
+            if (currentUser) return;
+
+            const listContainer = document.getElementById('courses-list');
+            const wrapper = document.getElementById('pagination-wrapper');
+            listContainer.innerHTML = '';
+
+            if (currentCourses.length === 0) {
+                listContainer.innerHTML = '<div style="text-align:center; padding: 40px; color: #666;">Курсів за вашим запитом не знайдено.</div>';
+                wrapper.style.display = 'none';
+                return;
+            } else {
+                wrapper.style.display = 'flex';
+            }
+
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageData = currentCourses.slice(start, end);
+
+            pageData.forEach(course => {
+                const detailsHTML = course.details.map(d => `${d}<br>`).join('');
+                const cardHTML = `
+                    <div class="course-wide-card">
+                        <div class="card-top">
+                            <span class="category-tag">${course.tag}</span>
+                            <span class="rating"><i class="fas fa-star"></i> ${course.rating}</span>
+                        </div>
+                        <h2>${course.title}</h2>
+                        <p class="course-desc">${course.desc}</p>
+                        <div class="course-meta">${detailsHTML}</div>
+                        <div class="card-bottom">
+                            <div class="price-container">
+                                <div class="price-block">${course.priceStr}</div>
+                                <span class="price-note">${course.note}</span>
+                            </div>
+                            <div class="card-buttons">
+                                <button class="btn-outline" onclick="openCourseDetails('${course.title}')">Детальніше</button>
+                                <button class="btn" onclick="openRegister()">Записатися</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                listContainer.innerHTML += cardHTML;
+            });
+            renderPaginationControls();
+        }
+
+        // --- ПАГІНАЦІЯ ЗІ СТРІЛОЧКАМИ ---
+        function renderPaginationControls() {
+            const totalPages = Math.ceil(currentCourses.length / itemsPerPage);
+            const controlsContainer = document.getElementById('pagination-controls');
+            const infoContainer = document.getElementById('pagination-info');
+
+            const start = (currentPage - 1) * itemsPerPage + 1;
+            const end = Math.min(currentPage * itemsPerPage, currentCourses.length);
+            infoContainer.innerText = `Показано ${start}-${end} з ${currentCourses.length} курсів`;
+
+            let buttonsHTML = '';
+            if (totalPages > 1) {
+                // Стрілка НАЗАД
+                const prevDisabled = currentPage === 1 ? 'disabled' : '';
+                buttonsHTML += `<button class="page-btn ${prevDisabled}" onclick="changePage(${currentPage - 1})"><i class="fas fa-chevron-left"></i></button>`;
+
+                // Цифри
+                for (let i = 1; i <= totalPages; i++) {
+                    buttonsHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                }
+
+                // Стрілка ВПЕРЕД
+                const nextDisabled = currentPage === totalPages ? 'disabled' : '';
+                buttonsHTML += `<button class="page-btn ${nextDisabled}" onclick="changePage(${currentPage + 1})"><i class="fas fa-chevron-right"></i></button>`;
+            }
+            controlsContainer.innerHTML = buttonsHTML;
+        }
+
+        function changePage(newPage) { 
+            const totalPages = Math.ceil(currentCourses.length / itemsPerPage);
+            if (newPage < 1 || newPage > totalPages) return;
+            currentPage = newPage;
+            renderCourses();
+            document.querySelector('.courses-header').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function applyFilters() { 
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categorySelect').value;
+            const sortType = document.getElementById('sortSelect').value;
+            const minPrice = document.getElementById('minPriceInput').value;
+            const maxPrice = document.getElementById('maxPriceInput').value;
+
+            currentCourses = allCourses.filter(course => {
+                const matchesSearch = course.title.toLowerCase().includes(searchText) || course.tag.toLowerCase().includes(searchText);
+                const matchesCategory = category === 'all' || course.tag === category;
+                let matchesPrice = true;
+                if (minPrice && course.priceVal < parseInt(minPrice)) matchesPrice = false;
+                if (maxPrice && course.priceVal > parseInt(maxPrice)) matchesPrice = false;
+                return matchesSearch && matchesCategory && matchesPrice;
+            });
+
+            if (sortType === 'price_asc') currentCourses.sort((a, b) => a.priceVal - b.priceVal);
+            else if (sortType === 'price_desc') currentCourses.sort((a, b) => b.priceVal - a.priceVal);
+            else if (sortType === 'popular') currentCourses.sort((a, b) => b.rating - a.rating);
+
+            currentPage = 1;
+            renderCourses();
+        }
+
+        // --- ЗАГЛУШКИ ДЛЯ КАБІНЕТІВ ---
+        async function loadAdminDashboard() {
+            const list = document.getElementById('courses-list');
+            list.innerHTML = '<h2>🗓 Панель Адміністратора: Всі заняття</h2>';
+            try {
+                const res = await fetch(`${API_URL}/admin/schedule`);
+                const schedule = await res.json();
+                let html = '<table border="1" style="width:100%; text-align:left; border-collapse: collapse; background:white;"><tr><th>Дата</th><th>Студент</th><th>Вчитель</th><th>Авто</th></tr>';
+                schedule.forEach(item => { html += `<tr><td style="padding:10px">${new Date(item.lesson_datetime).toLocaleString()}</td><td style="padding:10px">${item.student}</td><td style="padding:10px">${item.instructor}</td><td style="padding:10px">${item.car || '-'}</td></tr>`; });
+                html += '</table>';
+                list.innerHTML += html;
+            } catch(e) { list.innerHTML += "<p>Помилка завантаження даних.</p>"; }
+            showPage('courses'); 
+        }
+
+        async function loadInstructorDashboard() {
+            const list = document.getElementById('courses-list');
+            list.innerHTML = '<h2>👨‍🏫 Панель Інструктора: Мої уроки</h2>';
+            try {
+                const res = await fetch(`${API_URL}/instructor/schedule?id=${currentUser.linked_id}`);
+                const schedule = await res.json();
+                let html = '<ul style="list-style:none; padding:0;">';
+                schedule.forEach(item => { html += `<li style="background:white; padding:15px; margin-bottom:10px; border-radius:8px;">📅 ${new Date(item.lesson_datetime).toLocaleString()} — Учень: <b>${item.student}</b> (Група: ${item.group_name})</li>`; });
+                html += '</ul>';
+                list.innerHTML += html;
+            } catch(e) { list.innerHTML += "<p>Помилка завантаження даних.</p>"; }
+            showPage('courses');
+        }
+
+        async function loadStudentDashboard() {
+            const list = document.getElementById('courses-list');
+            list.innerHTML = '<h2>🎓 Мій Кабінет: Розклад</h2>';
+            try {
+                const res = await fetch(`${API_URL}/student/schedule?id=${currentUser.linked_id}`);
+                const schedule = await res.json();
+                if(schedule.length === 0) { list.innerHTML += '<p>У вас поки немає запланованих занять.</p>'; return; }
+                let html = '<ul style="list-style:none; padding:0;">';
+                schedule.forEach(item => { html += `<li style="background:white; padding:15px; margin-bottom:10px; border-radius:8px;">🚗 ${new Date(item.lesson_datetime).toLocaleString()} — Інструктор: ${item.instructor} (${item.car || 'Теорія'})</li>`; });
+                html += '</ul>';
+                list.innerHTML += html;
+            } catch(e) { list.innerHTML += "<p>Помилка завантаження даних.</p>"; }
+            showPage('courses');
+        }
+
+        // Запускаємо
+        renderCourses();
+    </script>
+</body>
+</html>
